@@ -2,6 +2,7 @@ package com.javaex.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -10,19 +11,37 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.javaex.dao.PhonebookDao;
+import com.javaex.service.PhonebookService;
 import com.javaex.vo.PersonVo;
 
 @Controller
 public class PhonebookController {
 	
+	@Autowired
+	private PhonebookService phonebookService;
 	
+	
+	@RequestMapping(value="/phone/list", method= {RequestMethod.GET, RequestMethod.POST})
+	public String list(Model model) {
+		System.out.println("PhonebookController.list()");
+		
+		//spring @autowired가 알아서 제어(제어의 역전) Service 클래스에는 @Service써줘야함
+		//PhonebookService phonebookService = new PhonebookService();
+		
+		List<PersonVo> personList = phonebookService.exeList();
+		
+		model.addAttribute("pList", personList);
+	
+		return "list";
+	}
+		
 	
 	//localhost:8080/phonebook5/phone/writeform
 	@RequestMapping(value="/phone/writeform", method = {RequestMethod.POST, RequestMethod.GET})
 	public String wirteForm() {
 		System.out.println("PhonebookController.writeform()");
 		
-		return "/WEB-INF/views/writeForm.jsp";
+		return "writeForm";
 	}
 	
 	
@@ -56,34 +75,10 @@ public class PhonebookController {
 	public String write2(@ModelAttribute PersonVo personVo) {
 		System.out.println("PhonebookController.write2()");
 		
-		System.out.println(personVo.toString());
-		
-		
-		//dao를 메모리에 올린다
-		PhonebookDao phoneDao = new PhonebookDao();
-		
-		//dao.personInsert(vo) 저장한다
-		phoneDao.personInsert(personVo);
-		
-		
-		//리스트로 리다이렉트
+		//PhonebookService phonebookService = new PhonebookService();
+		phonebookService.exeWrite(personVo);
 		
 		return "redirect:/phone/list";
-	}
-	
-	
-	@RequestMapping(value="/phone/list", method= {RequestMethod.GET, RequestMethod.POST})
-	public String list(Model model) {
-		System.out.println("PhonebookController.list()");
-		
-		PhonebookDao phonebookDao = new PhonebookDao();
-		
-		List<PersonVo> personList = phonebookDao.personSelect();
-		//System.out.println(personList);
-		
-		model.addAttribute("pList", personList);
-	
-		return "/WEB-INF/views/list.jsp";
 	}
 	
 	
@@ -92,14 +87,12 @@ public class PhonebookController {
 			                 Model model) {
 		System.out.println("PhonebookController.modifyForm()");
 		
-		PhonebookDao phonebookDao = new PhonebookDao();
-		PersonVo personVo = phonebookDao.personSelectOne(no);
-		System.out.println(no);
-		System.out.println(personVo);
+		//PhonebookService phonebookService = new PhonebookService();
+		PersonVo personVo = phonebookService.exeModifyForm(no);
 		
 		model.addAttribute("personVo", personVo);
 		
-		return "/WEB-INF/views/modifyForm.jsp";
+		return "modifyForm";
 	}
 	
 	@RequestMapping(value="/phone/modify", method= {RequestMethod.GET, RequestMethod.POST})
@@ -108,10 +101,8 @@ public class PhonebookController {
 		
 		System.out.println(personVo.toString());
 		
-		
-		PhonebookDao phonebookDao = new PhonebookDao();
-		phonebookDao.personUpdate(personVo);
-		
+		//PhonebookService phonebookService = new PhonebookService();
+		phonebookService.exeModify(personVo);
 		
 		return "redirect:/phone/list";
 	}
@@ -121,8 +112,8 @@ public class PhonebookController {
 		System.out.println("PhonebookController.delete()");
 		System.out.println(no);
 		
-		PhonebookDao phoneDao = new PhonebookDao();
-		phoneDao.personDelete(no);
+		//PhonebookService phonebookService = new PhonebookService();
+		phonebookService.exeDelete(no);
 		
 		return "redirect:/phone/list";
 	}
