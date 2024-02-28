@@ -20,6 +20,31 @@ public class PhonebookController {
 	@Autowired
 	private PhonebookService phonebookService;
 	
+	@RequestMapping(value="/phone/modifyform", method= {RequestMethod.GET, RequestMethod.POST})
+	public String modifyForm(@RequestParam(value="no") int no,
+			                 Model model) {
+		System.out.println("PhonebookController.modifyForm()");
+		
+		//PhonebookService phonebookService = new PhonebookService();
+		PersonVo personVo = phonebookService.exeModifyForm(no);
+		
+		model.addAttribute("personVo", personVo);
+		
+		return "modifyForm";
+	}
+	
+	
+	//localhost:8080/phonebook5/phone/write?name=
+	@RequestMapping(value="/phone/write2", method = {RequestMethod.GET, RequestMethod.POST})
+	public String write2(@ModelAttribute PersonVo personVo) {
+		System.out.println("PhonebookController.write2()");
+		
+		//PhonebookService phonebookService = new PhonebookService();
+		phonebookService.exeWrite(personVo);
+		
+		return "redirect:/phone/list";
+	}
+	
 	
 	@RequestMapping(value="/phone/list", method= {RequestMethod.GET, RequestMethod.POST})
 	public String list(Model model) {
@@ -70,30 +95,6 @@ public class PhonebookController {
 		return "redirect:/phone/list";
 	}
 	
-	//localhost:8080/phonebook5/phone/write?name=
-	@RequestMapping(value="/phone/write2", method = {RequestMethod.GET, RequestMethod.POST})
-	public String write2(@ModelAttribute PersonVo personVo) {
-		System.out.println("PhonebookController.write2()");
-		
-		//PhonebookService phonebookService = new PhonebookService();
-		phonebookService.exeWrite(personVo);
-		
-		return "redirect:/phone/list";
-	}
-	
-	
-	@RequestMapping(value="/phone/modifyform", method= {RequestMethod.GET, RequestMethod.POST})
-	public String modifyForm(@RequestParam(value="no") int no,
-			                 Model model) {
-		System.out.println("PhonebookController.modifyForm()");
-		
-		//PhonebookService phonebookService = new PhonebookService();
-		PersonVo personVo = phonebookService.exeModifyForm(no);
-		
-		model.addAttribute("personVo", personVo);
-		
-		return "modifyForm";
-	}
 	
 	@RequestMapping(value="/phone/modify", method= {RequestMethod.GET, RequestMethod.POST})
 	public String modify(@ModelAttribute PersonVo personVo) {

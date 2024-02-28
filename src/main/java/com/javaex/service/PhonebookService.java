@@ -13,6 +13,18 @@ public class PhonebookService {
 	
 	@Autowired
 	private PhonebookDao phonebookDao;
+	
+	
+	public int exeWrite(PersonVo personVo) {
+		System.out.println("PhonebookService.exeWrite()");
+		
+		//PhonebookDao phonebookDao = new PhonebookDao();
+		
+		int count = phonebookDao.personInsert(personVo);
+		
+		return count;
+		
+	}
 
 	
 	public List<PersonVo> exeList() {
@@ -26,16 +38,7 @@ public class PhonebookService {
 		return personList;
 	}
 	
-	public int exeWrite(PersonVo personVo) {
-		System.out.println("PhonebookService.exeWrite()");
-		
-		//PhonebookDao phonebookDao = new PhonebookDao();
-		
-		int count = phonebookDao.personInsert(personVo);
-		
-		return count;
-		
-	}
+
 	
 	public int exeDelete(int no) {
 		System.out.println("PhonebookService.exeDelete()");
