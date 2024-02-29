@@ -1,6 +1,7 @@
 package com.javaex.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.javaex.dao.PhonebookDao;
 import com.javaex.service.PhonebookService;
 import com.javaex.vo.PersonVo;
 
@@ -20,9 +20,9 @@ public class PhonebookController {
 	@Autowired
 	private PhonebookService phonebookService;
 	
+	//수정폼
 	@RequestMapping(value="/phone/modifyform", method= {RequestMethod.GET, RequestMethod.POST})
-	public String modifyForm(@RequestParam(value="no") int no,
-			                 Model model) {
+	public String modifyForm(@RequestParam(value="no") int no, Model model) {
 		System.out.println("PhonebookController.modifyForm()");
 		
 		//PhonebookService phonebookService = new PhonebookService();
@@ -33,11 +33,24 @@ public class PhonebookController {
 		return "modifyForm";
 	}
 	
+	//수정폼2
+	@RequestMapping(value="/phone/modifyform2", method= {RequestMethod.GET, RequestMethod.POST})
+	public String modifyForm2(@RequestParam(value="no") int no, Model model) {
+		System.out.println("PhonebookController.modifyForm2()");
+		
+		Map<String, Object> pMap = phonebookService.exeModifyForm2(no);
+		System.out.println(pMap);
+		
+		model.addAttribute("pMap", pMap);
+		
+		return "modifyForm2";
+	}
+	
 	
 	//localhost:8080/phonebook5/phone/write?name=
-	@RequestMapping(value="/phone/write2", method = {RequestMethod.GET, RequestMethod.POST})
-	public String write2(@ModelAttribute PersonVo personVo) {
-		System.out.println("PhonebookController.write2()");
+	@RequestMapping(value="/phone/write", method = {RequestMethod.GET, RequestMethod.POST})
+	public String write(@ModelAttribute PersonVo personVo) {
+		System.out.println("PhonebookController.write()");
 		
 		//PhonebookService phonebookService = new PhonebookService();
 		phonebookService.exeWrite(personVo);
@@ -71,26 +84,18 @@ public class PhonebookController {
 	
 	
 	//localhost:8080/phonebook5/phone/write?name=
-	@RequestMapping(value="/phone/write", method = {RequestMethod.GET, RequestMethod.POST})
-	public String write(@RequestParam(value="name") String name,
+	@RequestMapping(value="/phone/write2", method = {RequestMethod.GET, RequestMethod.POST})
+	public String write2(@RequestParam(value="name") String name,
 					  @RequestParam(value="hp") String hp,
 					  @RequestParam(value="company") String company) {
-		System.out.println("PhonebookController.write()");
+		System.out.println("PhonebookController.write2()");
 		
 		System.out.println(name);
 		System.out.println(hp);
 		System.out.println(company);
 		
-		//vo로 묶기
-		PersonVo personVo = new PersonVo(name, hp, company);
 		
-		//dao를 메모리에 올린다
-		PhonebookDao phoneDao = new PhonebookDao();
-		
-		//dao.personInsert(vo) 저장한다
-		phoneDao.personInsert(personVo);
-		
-		//리스트로 리다이렉트
+		phonebookService.exeWrite2(name, hp, company);
 		
 		return "redirect:/phone/list";
 	}
